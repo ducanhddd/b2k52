@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <title>B2-K52 rơi mù hồng vũ trụ - Hỗ trợ cảm ứng</title>
+  <style>
+    body {
+      background: #000;
+      overflow: hidden;
+      margin: 0;
+      height: 100vh;
+      perspective: 1000px;
+    }
+    #starfield {
+      position: fixed;
+      z-index: 0;
+      left: 0; top: 0;
+      width: 100vw;
+      height: 100vh;
+      pointer-events: none;
+      display: block;
+    }
+    #falling-container {
+      width: 100vw;
+      height: 100vh;
+      position: relative;
+      z-index: 1;
+      transform-style: preserve-3d;
+      transition: transform 0.4s cubic-bezier(.17,.67,.83,.67);
+    }
+    .falling {
+      position: absolute;
+      top: -80px;
+      font-size: 2.5em;
+      min-width: 360px;
+      max-width: 80vw;
+      pointer-events: none;
+      user-select: none;
+      opacity: 0.98;
+      color: #ff89e9;
+      text-shadow: 0 0 16px #ff89e9, 0 0 32px #ff2ebd, 0 0 40px #fff;
+      animation: fall3d linear;
+      will-change: transform, opacity;
+      font-family: 'Segoe UI', 'Arial', sans-serif;
+      font-weight: bold;
+      white-space: pre-line;
+      text-align: center;
+      border-radius: 30px;
+      padding: 0.2em 0.8em;
+      background: rgba(35,0,40,0.23);
+      box-shadow: 0 4px 48px 0 #ffb6f950;
+      left: var(--x, 50vw);
+      transform: translateX(-50%) translateZ(var(--z, 0px));
+    }
+    .heart {
+      color: #ff4fcf;
+      text-shadow: 0 0 26px #ffb6f9, 0 0 48px #ff2ebd, 0 0 56px #fff;
+      font-size: 2.7em;
+      opacity: 0.96;
+      animation-duration: 2.3s !important;
+      font-family: 'Segoe UI Emoji', 'Segoe UI Symbol', 'Arial', sans-serif;
+      font-weight: normal;
+      background: transparent;
+      min-width: unset;
+      padding: 0;
+      box-shadow: none;
+      left: var(--x, 50vw);
+      transform: translateX(-50%) translateZ(var(--z, 0px));
+    }
+    @keyframes fall3d {
+      from {
+        opacity: 1;
+      }
+      to {
+        transform: translateY(110vh) translateX(-50%) translateZ(var(--z, 0px));
+        opacity: 0.6;
+      }
+    }
+  </style>
+</head>
+<body>
+  <canvas id="starfield"></canvas>
+  <div id="falling-container"></div>
+  <script>
+    // Vẽ nền các vì sao
+    function drawStars() {
+      const canvas = document.getElementById('starfield');
+      const ctx = canvas.getContext('2d');
+      const w = window.innerWidth, h = window.innerHeight;
+      canvas.width = w;
+      canvas.height = h;
+      ctx.clearRect(0, 0, w, h);
+      const numStars = Math.floor(w * h / 1200);
+      for(let i = 0; i < numStars; i++) {
+        const x = Math.random() * w;
+        const y = Math.random() * h;
+        const radius = Math.random() * 0.9 + 0.4;
+        ctx.beginPath();
+        ctx.arc(x, y, radius, 0, 2 * Math.PI, false);
+        ctx.fillStyle = "white";
+        ctx.globalAlpha = Math.random() * 0.7 + 0.3;
+        ctx.fill();
+      }
+      ctx.globalAlpha = 1;
+    }
+    drawStars();
+    window.addEventListener('resize', drawStars);
+
+    // Các câu slogan B2-K52
+    const words = [
+      "Mãi iu B2-K52 😘",
+      "B2-K52 auto đỉnh😎",
+      "B2-K52 cute sẵn, có cô Yến càng xinh!😍",
+      "Cô Yến mà giảng bài, B2 chỉ có thể ‘iu iu’!🥰",
+      "Cô xinh – lớp xịn, combo gây thương nhớ ☺️"
+    ];
+    const hearts = ["💖", "💞", "💕", "💗", "💓"];
+    const container = document.getElementById('falling-container');
+    function createFallingElement() {
+      const el = document.createElement("span");
+      if (Math.random() < 0.22) {
+        el.textContent = hearts[Math.floor(Math.random() * hearts.length)];
+        el.className = "falling heart";
+      } else {
+        el.textContent = words[Math.floor(Math.random() * words.length)];
+        el.className = "falling";
+      }
+      // Random vị trí ngang trong vùng giữa (20vw -> 80vw)
+      const leftPercent = 20 + Math.random() * 60; // 20vw đến 80vw
+      el.style.setProperty('--x', leftPercent + 'vw');
+      // Độ sâu 3D
+      const z = (Math.random() - 0.5) * 800;
+      el.style.setProperty('--z', `${z}px`);
+      // Thời gian rơi ngẫu nhiên
+      const duration = 2 + Math.random() * 2;
+      el.style.animationDuration = duration + "s";
+      container.appendChild(el);
+      setTimeout(() => el.remove(), duration * 1000);
+    }
+    setInterval(createFallingElement, 120);
+
+    // Góc nhìn 3D: Hỗ trợ cả chuột (PC) và cảm ứng (mobile)
+    let rotationY = 0, rotationX = 0;
+    // PC: Mousemove
+    document.body.addEventListener('mousemove', function(e) {
+      const percentX = (e.clientX / window.innerWidth - 0.5) * 2;
+      const percentY = (e.clientY / window.innerHeight - 0.5) * 2;
+      rotationY = percentX * 30;
+      rotationX = -percentY * 18;
+      applyTransform();
+    });
+    document.body.addEventListener('mouseleave', function() {
+      rotationY = 0; rotationX = 0;
+      applyTransform();
+    });
+    // Mobile: Touch drag
+    let lastTouch = null;
+    document.body.addEventListener('touchstart', function(e) {
+      if (e.touches.length === 1) {
+        lastTouch = { x: e.touches[0].clientX, y: e.touches[0].clientY };
+      }
+    });
+    document.body.addEventListener('touchmove', function(e) {
+      if (e.touches.length === 1 && lastTouch) {
+        const dx = e.touches[0].clientX - lastTouch.x;
+        const dy = e.touches[0].clientY - lastTouch.y;
+        // Nhạy vừa phải
+        rotationY += dx * 0.2;
+        rotationX += -dy * 0.15;
+        // Giới hạn góc nhìn (cho đẹp, không lật ngược)
+        rotationX = Math.max(Math.min(rotationX, 50), -50);
+        rotationY = Math.max(Math.min(rotationY, 60), -60);
+        applyTransform();
+        lastTouch = { x: e.touches[0].clientX, y: e.touches[0].clientY };
+        e.preventDefault();
+      }
+    }, {passive: false});
+    document.body.addEventListener('touchend', function(e) {
+      lastTouch = null;
+    });
+    function applyTransform() {
+      container.style.transform = `rotateY(${rotationY}deg) rotateX(${rotationX}deg)`;
+    }
+  </script>
+</body>
+</html>
