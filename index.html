@@ -79,7 +79,67 @@
   </style>
 </head>
 <body>
-  <canvas id="starfie1000);
+  <canvas id="starfield"></canvas>
+  <div id="falling-container"></div>
+  <script>
+    // Vẽ nền các vì sao
+    function drawStars() {
+      const canvas = document.getElementById('starfield');
+      const ctx = canvas.getContext('2d');
+      const w = window.innerWidth, h = window.innerHeight;
+      canvas.width = w;
+      canvas.height = h;
+      ctx.clearRect(0, 0, w, h);
+      const numStars = Math.floor(w * h / 1200);
+      for(let i = 0; i < numStars; i++) {
+        const x = Math.random() * w;
+        const y = Math.random() * h;
+        const radius = Math.random() * 0.9 + 0.4;
+        ctx.beginPath();
+        ctx.arc(x, y, radius, 0, 2 * Math.PI, false);
+        ctx.fillStyle = "white";
+        ctx.globalAlpha = Math.random() * 0.7 + 0.3;
+        ctx.fill();
+      }
+      ctx.globalAlpha = 1;
+    }
+    drawStars();
+    window.addEventListener('resize', drawStars);
+
+    // Các câu slogan B2-K52
+    const words = [
+      "Mãi iu B2-K52 😘",
+      "B2-K52 auto đỉnh😎",
+      "B2-K52 cute sẵn, có cô Yến càng xinh!😍",
+      "Cô Yến mà giảng bài, B2 chỉ có thể ‘iu iu’!🥰",
+      "Cô xinh – lớp xịn, combo gây thương nhớ ☺️"
+    ];
+    const hearts = ["💖", "💞", "💕", "💗", "💓"];
+    const container = document.getElementById('falling-container');
+    function createFallingElement() {
+      const el = document.createElement("span");
+      if (Math.random() < 0.22) {
+        el.textContent = hearts[Math.floor(Math.random() * hearts.length)];
+        el.className = "falling heart";
+        el.style.animationDuration = (7 + Math.random() * 2.5) + "s";
+      } else {
+        el.textContent = words[Math.floor(Math.random() * words.length)];
+        el.className = "falling";
+        el.style.animationDuration = (6 + Math.random() * 2.5) + "s";
+      }
+      // Random vị trí ngang trong vùng giữa (20vw -> 80vw)
+      const leftPercent = 20 + Math.random() * 60; // 20vw đến 80vw
+      el.style.setProperty('--x', leftPercent + 'vw');
+      // Độ sâu 3D
+      const z = (Math.random() - 0.5) * 800;
+      el.style.setProperty('--z', `${z}px`);
+      // Thêm vào DOM
+      container.appendChild(el);
+      // Xóa sau khi rơi xong
+      setTimeout(() => el.remove(), parseFloat(el.style.animationDuration) * 1000);
+    }
+    // XUẤT HIỆN RẤT CHẬM: mỗi 900ms mới xuất hiện 1 chữ/trái tim
+    setInterval(createFallingElement, 900);
 
     // Góc nhìn 3D: Hỗ trợ cả chuột (PC) và cảm ứng (mobile)
     let rotationY = 0, rotationX = 0;
