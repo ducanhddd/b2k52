@@ -121,11 +121,11 @@
       if (Math.random() < 0.22) {
         el.textContent = hearts[Math.floor(Math.random() * hearts.length)];
         el.className = "falling heart";
-        el.style.animationDuration = (7 + Math.random() * 5) + "s";
+        el.style.animationDuration = (7 + Math.random() * 2.5) + "s";
       } else {
         el.textContent = words[Math.floor(Math.random() * words.length)];
         el.className = "falling";
-        el.style.animationDuration = (6 + Math.random() * 5) + "s";
+        el.style.animationDuration = (6 + Math.random() * 4) + "s";
       }
       // Random vị trí ngang trong vùng giữa (20vw -> 80vw)
       const leftPercent = 20 + Math.random() * 60; // 20vw đến 80vw
@@ -139,7 +139,7 @@
       setTimeout(() => el.remove(), parseFloat(el.style.animationDuration) * 1000);
     }
     // XUẤT HIỆN RẤT CHẬM: mỗi 900ms mới xuất hiện 1 chữ/trái tim
-    setInterval(createFallingElement, 2000);
+    setInterval(createFallingElement, 1500);
 
     // Góc nhìn 3D: Hỗ trợ cả chuột (PC) và cảm ứng (mobile)
     let rotationY = 0, rotationX = 0;
