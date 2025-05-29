@@ -2,7 +2,7 @@
 <html lang="vi">
 <head>
   <meta charset="UTF-8">
-  <title>B2-K52 rơi mù hồng vũ trụ - Hỗ trợ cảm ứng</title>
+  <title>B2-K52 rơi mù hồng vũ trụ - Cực chậm</title>
   <style>
     body {
       background: #000;
@@ -57,7 +57,7 @@
       text-shadow: 0 0 26px #ffb6f9, 0 0 48px #ff2ebd, 0 0 56px #fff;
       font-size: 2.7em;
       opacity: 0.96;
-      animation-duration: 2.3s !important;
+      animation-duration: 7.5s !important;
       font-family: 'Segoe UI Emoji', 'Segoe UI Symbol', 'Arial', sans-serif;
       font-weight: normal;
       background: transparent;
@@ -121,9 +121,11 @@
       if (Math.random() < 0.22) {
         el.textContent = hearts[Math.floor(Math.random() * hearts.length)];
         el.className = "falling heart";
+        el.style.animationDuration = (7 + Math.random() * 2.5) + "s";
       } else {
         el.textContent = words[Math.floor(Math.random() * words.length)];
         el.className = "falling";
+        el.style.animationDuration = (6 + Math.random() * 2.5) + "s";
       }
       // Random vị trí ngang trong vùng giữa (20vw -> 80vw)
       const leftPercent = 20 + Math.random() * 60; // 20vw đến 80vw
@@ -131,13 +133,13 @@
       // Độ sâu 3D
       const z = (Math.random() - 0.5) * 800;
       el.style.setProperty('--z', `${z}px`);
-      // Thời gian rơi ngẫu nhiên
-      const duration = 2 + Math.random() * 2;
-      el.style.animationDuration = duration + "s";
+      // Thêm vào DOM
       container.appendChild(el);
-      setTimeout(() => el.remove(), duration * 1000);
+      // Xóa sau khi rơi xong
+      setTimeout(() => el.remove(), parseFloat(el.style.animationDuration) * 1000);
     }
-    setInterval(createFallingElement, 120);
+    // XUẤT HIỆN RẤT CHẬM: mỗi 900ms mới xuất hiện 1 chữ/trái tim
+    setInterval(createFallingElement, 900);
 
     // Góc nhìn 3D: Hỗ trợ cả chuột (PC) và cảm ứng (mobile)
     let rotationY = 0, rotationX = 0;
@@ -164,10 +166,8 @@
       if (e.touches.length === 1 && lastTouch) {
         const dx = e.touches[0].clientX - lastTouch.x;
         const dy = e.touches[0].clientY - lastTouch.y;
-        // Nhạy vừa phải
         rotationY += dx * 0.2;
         rotationX += -dy * 0.15;
-        // Giới hạn góc nhìn (cho đẹp, không lật ngược)
         rotationX = Math.max(Math.min(rotationX, 50), -50);
         rotationY = Math.max(Math.min(rotationY, 60), -60);
         applyTransform();
